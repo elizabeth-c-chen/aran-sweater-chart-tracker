@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hoff Aran — Body Chart (XS)</title>
+<style>
+  :root {
+    --bg: #f6f3ee; --panel: #fffdf9; --ink: #2b2723; --muted: #8a8279; --line: #ddd5ca;
+    --accent: #b5562c; --hl: rgba(255, 214, 0, 0.42); --hl-edge: rgba(214, 160, 0, 0.9);
+    --done: rgba(120, 110, 100, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  header {
+    position: sticky; top: 0; z-index: 20; background: var(--panel);
+    border-bottom: 1px solid var(--line); padding: 10px 16px;
+    display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  }
+  h1 { font-size: 15px; margin: 0; font-weight: 650; }
+  .now { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+  .now .rnd { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { background: #f1ebe2; border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px;
+    font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .chip b { color: var(--accent); }
+  .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-left: auto; }
+  button, select, input[type=number] {
+    font: inherit; border: 1px solid var(--line); background: #fff; color: var(--ink);
+    border-radius: 7px; padding: 4px 10px; cursor: pointer;
+  }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button:hover { filter: brightness(0.97); }
+  label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+  input[type=number] { width: 64px; cursor: text; padding: 3px 6px; }
+
+  main { padding: 18px 16px 80px; }
+  .wrap { display: inline-block; position: relative; }
+  .colhead, .colfoot { display: flex; padding-right: 48px; }
+  .colhead { position: sticky; top: var(--headH, 56px); z-index: 10; background: var(--bg); }
+  .colhead > div, .colfoot > div { flex: none; text-align: center; padding: 4px 0; }
+  .colhead .num { display: inline-block; width: 24px; height: 24px; line-height: 24px; border-radius: 50%;
+    background: var(--ink); color: #fff; font-weight: 700; font-size: 13px; }
+  .colhead .sub, .colfoot .sub { color: var(--muted); font-size: 12px; }
+  .colhead .cur { font-size: 12px; font-variant-numeric: tabular-nums; }
+  .colhead .cur b { color: var(--accent); }
+  .colfoot input { width: 52px; }
+
+  #chart { position: relative; display: flex; flex-direction: column; user-select: none; background: #fff;
+    box-shadow: 0 0 0 1px #222; }
+  #chart { margin-right: 48px; width: max-content; }
+  .small .row.even .lab { visibility: hidden; }
+  .muted { color: var(--muted); }
+  .row { display: flex; position: relative; cursor: pointer; }
+  .row .slice { flex: none; background-repeat: no-repeat; image-rendering: auto; }
+  .row .lab { position: absolute; right: -48px; width: 44px; top: 0; bottom: 0; display: flex; align-items: center;
+    font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; padding-left: 6px; }
+  .row.even .lab { color: #b9b1a7; }
+  .row.done::after { content: ""; position: absolute; inset: 0; background: var(--done); pointer-events: none; }
+  .row.restart80 { box-shadow: inset 0 -2px 0 var(--accent); }
+
+  #hl {
+    position: absolute; left: -10px; right: -54px; z-index: 5; background: var(--hl);
+    border-top: 2px solid var(--hl-edge); border-bottom: 2px solid var(--hl-edge);
+    mix-blend-mode: multiply; cursor: grab; touch-action: none; border-radius: 3px;
+  }
+  #hl.dragging { cursor: grabbing; }
+  #hl .grip { position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: var(--hl-edge); border-radius: 3px 0 0 3px; }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 18px; max-width: 980px; }
+  .panel h2 { font-size: 14px; margin: 0 0 6px; }
+  .panel p { margin: 4px 0; color: #4a443e; }
+  .panel img { max-width: 100%; height: auto; display: block; margin-top: 8px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  kbd { background: #fff; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hoff Aran · Body · Size XS</h1>
+  <div class="now"><span class="muted">Round</span> <span class="rnd" id="rndNum">1</span> <span id="rndOf" style="color:var(--muted)"></span></div>
+  <div class="chips" id="chips"></div>
+  <div class="controls">
+    <button id="prev" title="Previous round (↓)">↓ Back</button>
+    <button id="next" class="primary" title="Next round (↑ or Space)">↑ Next round</button>
+    <label>Cell <input type="range" id="zoom" min="8" max="44" value="24"></label>
+    <button id="fit" title="Fit chart to window width">Fit width</button>
+    <label>Rounds <input type="number" id="nrows" min="8" max="400" value="80"></label>
+    <label><input type="checkbox" id="shade" checked> shade done</label>
+  </div>
+</header>
+
+<main>
+  <div class="wrap" id="wrap">
+    <div class="colhead" id="colhead"></div>
+    <div id="chart"><div id="hl"><div class="grip"></div></div></div>
+    <div class="colfoot" id="colfoot"></div>
+  </div>
+
+  <div class="panel">
+    <details open>
+      <summary>How this chart is put together</summary>
+      <p>The five body cable patterns sit side by side in the order you knit them: read every round <b>right to left</b>, starting with ① and ending with ⑤ (same for front and back). Seed-stitch side panels are not shown.</p>
+      <p>Each pattern repeats on its own (① and ⑤ every 8 rows, ② and ④ every 20, ③ every 16), so the full combination only lines up again every <b>80 rounds</b>. Each panel is tiled with its own repeat. A thick black line inside a panel marks where that pattern starts over at row 1.</p>
+      <p><b>Starting rows:</b> the body continues the pattern from Chart B, which ends on row 32. Matching Chart B (XS) against the cable charts puts body round 1 at row 5 of ① and ⑤, row 17 of ② and ④, and row 9 of ③. These are the default “start row” values under each panel. Change them if your piece ended somewhere else.</p>
+      <p><b>Moving the highlighter:</b> drag the yellow bar, click any row, or use <kbd>↑</kbd>/<kbd>Space</kbd> for the next round and <kbd>↓</kbd> to go back. Your place is saved in this browser.</p>
+    </details>
+  </div>
+  <div class="panel">
+    <details>
+      <summary>Chart key</summary>
+      <p>In the round every round is a RS round: blank = knit, dot = purl.</p>
+      <img src="charts/key.png" alt="Chart key">
+    </details>
+  </div>
+</main>
+
+<script>
+// Panels in left-to-right display order (knitting reads right-to-left: 1 → 5).
+const PANELS = [
+  { id: 'cp5', n: 5, cols: 18, rows: 8,  start: 5,  label: 'R back / L front' },
+  { id: 'cp4', n: 4, cols: 24, rows: 20, start: 17, label: 'R back / L front' },
+  { id: 'cp3', n: 3, cols: 28, rows: 16, start: 9,  label: 'Center' },
+  { id: 'cp2', n: 2, cols: 24, rows: 20, start: 17, label: 'L back / R front' },
+  { id: 'cp1', n: 1, cols: 18, rows: 8,  start: 5,  label: 'L back / R front' },
+];
+function fitCell() { return Math.max(8, Math.min(44, Math.floor((window.innerWidth - 32 - 60) / 112))); }
+const DEFAULT_STARTS = Object.fromEntries(PANELS.map(p => [p.id, p.start]));
+const KEY = 'hoff-aran-xs-body-v1';
+
+const store = {
+  load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } },
+  save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} },
+};
+const saved = store.load();
+const state = {
+  cur: saved.cur || 1,
+  cell: saved.cell || fitCell(),
+  nrows: saved.nrows || 80,
+  shade: saved.shade !== undefined ? saved.shade : true,
+  starts: Object.assign({}, DEFAULT_STARTS, saved.starts || {}),
+};
+const persist = () => store.save(state);
+
+const $ = id => document.getElementById(id);
+const chart = $('chart'), hl = $('hl');
+
+function panelRow(p, rnd) {
+  // Chart row (1-based) of panel p on body round rnd.
+  return ((state.starts[p.id] - 1 + rnd - 1) % p.rows + p.rows) % p.rows + 1;
+}
+
+function build() {
+  const c = state.cell;
+  // Header
+  $('colhead').innerHTML = PANELS.map(p => `
+    <div style="width:${p.cols * c}px">
+      <span class="num">${p.n}</span>
+      <div class="sub">${p.rows}-row</div>
+      <div class="cur" id="cur-${p.id}"></div>
+    </div>`).join('');
+  $('colfoot').innerHTML = PANELS.map(p => `
+    <div style="width:${p.cols * c}px">
+      <div class="sub">start row</div>
+      <input type="number" min="1" max="${p.rows}" value="${state.starts[p.id]}" data-id="${p.id}">
+    </div>`).join('') +
+    `<div style="padding-left:10px;align-self:center"><button id="resetStarts" title="XS defaults from Chart B">Reset</button></div>`;
+  $('colfoot').querySelectorAll('input').forEach(inp => inp.addEventListener('change', e => {
+    const p = PANELS.find(q => q.id === e.target.dataset.id);
+    let v = Math.round(+e.target.value) || 1; v = Math.min(p.rows, Math.max(1, v));
+    state.starts[p.id] = v; persist(); build();
+  }));
+  $('resetStarts').onclick = () => { state.starts = { ...DEFAULT_STARTS }; persist(); build(); };
+
+  chart.classList.toggle('small', c < 16);
+  // Rows: round 1 at the bottom
+  chart.querySelectorAll('.row').forEach(r => r.remove());
+  const frag = document.createDocumentFragment();
+  for (let rnd = state.nrows; rnd >= 1; rnd--) {
+    const row = document.createElement('div');
+    row.className = 'row' + (rnd % 2 === 0 ? ' even' : '') + (rnd % 80 === 0 && rnd < state.nrows ? ' restart80' : '');
+    row.dataset.rnd = rnd;
+    row.style.height = c + 'px';
+    for (const p of PANELS) {
+      const r = panelRow(p, rnd);
+      const s = document.createElement('div');
+      s.className = 'slice';
+      s.style.width = p.cols * c + 'px';
+      s.style.height = c + 'px';
+      s.style.backgroundImage = `url(charts/${p.id}.png)`;
+      s.style.backgroundSize = `${p.cols * c}px ${p.rows * c}px`;
+      s.style.backgroundPosition = `0 ${-(p.rows - r) * c}px`;
+      s.title = `Round ${rnd} · pattern ${p.n}, row ${r}`;
+      row.appendChild(s);
+    }
+    const lab = document.createElement('div');
+    lab.className = 'lab'; lab.textContent = rnd;
+    row.appendChild(lab);
+    frag.appendChild(row);
+  }
+  chart.appendChild(frag);
+  $('zoom').value = c; $('nrows').value = state.nrows; $('shade').checked = state.shade;
+  setCur(state.cur, false);
+}
+
+function yForRnd(rnd) { return (state.nrows - rnd) * state.cell; }
+function rndForY(y) { return Math.min(state.nrows, Math.max(1, state.nrows - Math.floor(y / state.cell))); }
+
+function setCur(rnd, scroll = true) {
+  state.cur = Math.min(state.nrows, Math.max(1, rnd));
+  hl.style.top = (yForRnd(state.cur) - 2) + 'px';
+  hl.style.height = (state.cell + 4) + 'px';
+  $('rndNum').textContent = state.cur;
+  $('rndOf').textContent = `of ${state.nrows}` + (state.cur > 80 ? ` · (repeat round ${((state.cur - 1) % 80) + 1})` : '');
+  $('chips').innerHTML = [...PANELS].reverse().map(p => `<span class="chip">${p.n}: row <b>${panelRow(p, state.cur)}</b></span>`).join('');
+  for (const p of PANELS) { const el = $('cur-' + p.id); if (el) el.innerHTML = `row <b>${panelRow(p, state.cur)}</b>`; }
+  chart.querySelectorAll('.row').forEach(r => r.classList.toggle('done', state.shade && +r.dataset.rnd < state.cur));
+  persist();
+  if (scroll) {
+    const rect = hl.getBoundingClientRect(), headH = document.querySelector('header').offsetHeight;
+    if (rect.top < headH + 40 || rect.bottom > innerHeight - 40)
+      window.scrollBy({ top: rect.top - (headH + innerHeight) / 2, behavior: 'smooth' });
+  }
+}
+
+// Dragging the highlighter
+let drag = null;
+hl.addEventListener('pointerdown', e => {
+  drag = { startY: e.clientY, startTop: yForRnd(state.cur) };
+  hl.setPointerCapture(e.pointerId); hl.classList.add('dragging'); e.preventDefault();
+});
+hl.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const top = drag.startTop + (e.clientY - drag.startY);
+  const rnd = rndForY(top + state.cell / 2);
+  if (rnd !== state.cur) setCur(rnd, false);
+});
+const endDrag = () => { drag = null; hl.classList.remove('dragging'); };
+hl.addEventListener('pointerup', endDrag); hl.addEventListener('pointercancel', endDrag);
+
+chart.addEventListener('click', e => {
+  const row = e.target.closest('.row'); if (row) setCur(+row.dataset.rnd, false);
+});
+
+$('fit').onclick = () => { state.cell = fitCell(); build(); };
+const setHeadH = () => document.documentElement.style.setProperty('--headH', document.querySelector('header').offsetHeight + 'px');
+setHeadH(); addEventListener('resize', setHeadH);
+$('next').onclick = () => setCur(state.cur + 1);
+$('prev').onclick = () => setCur(state.cur - 1);
+$('zoom').oninput = e => { state.cell = +e.target.value; build(); };
+$('nrows').onchange = e => { state.nrows = Math.min(400, Math.max(8, Math.round(+e.target.value) || 80)); build(); setCur(state.cur); };
+$('shade').onchange = e => { state.shade = e.target.checked; setCur(state.cur, false); };
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input')) return;
+  if (e.key === 'ArrowUp' || e.key === ' ') { e.preventDefault(); setCur(state.cur + 1); }
+  if (e.key === 'ArrowDown') { e.preventDefault(); setCur(state.cur - 1); }
+});
+
+build();
+setTimeout(() => setCur(state.cur), 50);
+</script>
+</body>
+</html>
